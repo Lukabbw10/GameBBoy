@@ -1,0 +1,33 @@
+flowchart TD
+    A["Start: nestedLoop(width, height)"]
+    B["Ausgabe der Erklärungs-Texte"]
+    C["i = 0"]
+
+    D{"i < height?"}
+    E["j = 0"]
+
+    F{"j < width?"}
+    G["print aktuelles j"]
+    H["j++"]
+
+    I["print aktuelles i"]
+    J["i++"]
+
+    K["Ende"]
+
+    A --> B
+    B --> C
+    C --> D
+
+    D -- Ja --> E
+    D -- Nein --> K
+
+    E --> F
+
+    F -- Ja --> G
+    G --> H
+    H --> F
+
+    F -- Nein --> I
+    I --> J
+    J --> D
