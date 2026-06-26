@@ -56,8 +56,10 @@ public class PixelSprite implements PixelDrawing {
 		for (int w = 0; w < width; w++) {
 			for (int h = 0; h < height; h++) {
 				var color = pixels.get(h + w * height);
-				graphic.setPixel(w + (int) x, h + (int) y, PixelColor.fromValue(color));
-			}
+				if (color != 4) {
+					graphic.setPixel(w + (int) x, h + (int) y, PixelColor.fromValue(color));
+				}
+							}
 		}
 	}
 
