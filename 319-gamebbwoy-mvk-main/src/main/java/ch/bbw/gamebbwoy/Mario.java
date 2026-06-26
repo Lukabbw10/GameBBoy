@@ -87,13 +87,13 @@ public class Mario {
 
     public void jump() {
         if (isOnGround) {
-            yVelocity = -2.5;
+            yVelocity = -2.3;
             isOnGround = false;
         }
     }
 
     public void tick(PixelDisplay graphic) {
-        yVelocity += 0.15;
+        yVelocity += 0.08;
 
         var nextY = frameStand.getY() + yVelocity;
 
@@ -117,5 +117,8 @@ public class Mario {
         } else {
             frameWalk.tick(graphic);
         }
+    }
+    public double getY() {
+        return frameStand.getY();
     }
 }
