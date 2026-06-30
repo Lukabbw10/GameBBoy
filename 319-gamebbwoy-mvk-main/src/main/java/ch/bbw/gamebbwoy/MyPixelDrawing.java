@@ -13,6 +13,102 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 	private static final int MARIO_WIDTH = 20;
 	private static final int MARIO_HEIGHT = 20;
 	private static final int MARIO_X = 10;
+	private static final int LETTER_WIDTH = 3;
+	private static final int LETTER_HEIGHT = 4;
+	private static final int LETTER_SPACING = 1;
+
+	private static final int[][] LETTER_M = {
+			{1, 0, 0, 0, 1},
+			{1, 1, 0, 1, 1},
+			{1, 0, 1, 0, 1},
+			{1, 0, 0, 0, 1},
+			{1, 0, 0, 0, 1}
+	};
+	private static final int[][] LETTER_A = {
+			{0, 1, 1, 0},
+			{1, 0, 0, 1},
+			{1, 1, 1, 1},
+			{1, 0, 0, 1},
+			{1, 0, 0, 1}
+	};
+	private static final int[][] LETTER_R = {
+			{1, 1, 0},
+			{1, 0, 1},
+			{1, 1, 0},
+			{1, 0, 1},
+			{1, 0, 1}
+	};
+	private static final int[][] LETTER_I = {
+			{1, 1, 1},
+			{0, 1, 0},
+			{0, 1, 0},
+			{0, 1, 0},
+			{1, 1, 1}
+	};
+	private static final int[][] LETTER_O = {
+			{1, 1, 1},
+			{1, 0, 1},
+			{1, 0, 1},
+			{1, 0, 1},
+			{1, 1, 1}
+	};
+	private static final int[][] LETTER_U = {
+			{1, 0, 1},
+			{1, 0, 1},
+			{1, 0, 1},
+			{1, 0, 1},
+			{1, 1, 1}
+	};
+	private static final int[][] LETTER_N = {
+			{1, 0, 0, 1},
+			{1, 1, 0, 1},
+			{1, 0, 1, 1},
+			{1, 0, 0, 1},
+			{1, 0, 0, 1}
+	};
+	private static final int[][] LETTER_E = {
+			{1, 1, 1},
+			{1, 0, 0},
+			{1, 1, 1},
+			{1, 0, 0},
+			{1, 1, 1}
+	};
+	private static final int[][] LETTER_S = {
+			{1, 1, 1},
+			{1, 0, 0},
+			{1, 1, 1},
+			{0, 0, 1},
+			{1, 1, 1}
+	};
+	private static final int[][] LETTER_T = {
+			{1, 1, 1},
+			{0, 1, 0},
+			{0, 1, 0},
+			{0, 1, 0},
+			{0, 1, 0}
+	};
+	private static final int[][] LETTER_P = {
+			{1, 1, 1},
+			{1, 0, 1},
+			{1, 1, 1},
+			{1, 0, 0},
+			{1, 0, 0}
+	};
+	private static final int[][] LETTER_C = {
+			{1, 1, 1},
+			{1, 0, 0},
+			{1, 0, 0},
+			{1, 0, 0},
+			{1, 1, 1}
+	};
+	private static final int[][] SPACE = {
+			{0, 0},
+			{0, 0},
+			{0, 0},
+			{0, 0},
+			{0, 0}
+	};
+
 	private Mario mario;
 	private List<Obstacle> obstacles = new ArrayList<>();
 	private int score = 0;
@@ -70,44 +166,53 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 	}
 
 	private void drawIntro(PixelDisplay graphic) {
-		drawM(graphic, 60, 50);
-		drawPressSpace(graphic);
+		var title = new int[][][]{LETTER_M, LETTER_A, LETTER_R, LETTER_I, LETTER_O, SPACE, LETTER_R, LETTER_U, LETTER_N};
+		drawText(graphic, title, 25, 25, 3);
+
+		var startText = new int[][][]{LETTER_S, LETTER_T, LETTER_A, LETTER_R, LETTER_T};
+		drawText(graphic, startText, 55, 80, 2);
+
+		var pressText = new int[][][]{LETTER_P, LETTER_R, LETTER_E, LETTER_S, LETTER_S, SPACE,
+				LETTER_S, LETTER_P, LETTER_A, LETTER_C, LETTER_E};
+		drawText(graphic, pressText, 35, 110, 2);
 	}
 
 	private void drawGameOver(PixelDisplay graphic) {
 		for (var x = 0; x < graphic.getPixelWidth(); x++) {
 			for (var y = 0; y < graphic.getPixelHeight(); y++) {
-				graphic.setPixel(x, y, PixelColor.BLACK);
+				graphic.setPixel(x, y, PixelColor.WHITE);
 			}
 		}
-		drawPressSpace(graphic);
+
+		var gameOverText = new int[][][]{LETTER_R, LETTER_E, LETTER_S, LETTER_T, LETTER_A, LETTER_R, LETTER_T};
+		drawText(graphic, gameOverText, 50, 60, 2);
+
+		var pressText = new int[][][]{LETTER_P, LETTER_R, LETTER_E, LETTER_S, LETTER_S, SPACE,
+				LETTER_S, LETTER_P, LETTER_A, LETTER_C, LETTER_E};
+		drawText(graphic, pressText, 35, 90, 2);
 	}
 
-	private void drawM(PixelDisplay graphic, int startX, int startY) {
-		var m = new int[][]{
-				{1, 0, 0, 0, 1},
-				{1, 1, 0, 1, 1},
-				{1, 0, 1, 0, 1},
-				{1, 0, 0, 0, 1},
-				{1, 0, 0, 0, 1}
-		};
+	private void drawText(PixelDisplay graphic, int[][][] letters, int startX, int startY, int scale) {
+		var offsetX = startX;
 
-		for (var row = 0; row < m.length; row++) {
-			for (var col = 0; col < m[row].length; col++) {
-				if (m[row][col] == 1) {
-					graphic.setPixel(startX + col * 3, startY + row * 3, PixelColor.BLACK);
-					graphic.setPixel(startX + col * 3 + 1, startY + row * 3, PixelColor.BLACK);
-					graphic.setPixel(startX + col * 3, startY + row * 3 + 1, PixelColor.BLACK);
-					graphic.setPixel(startX + col * 3 + 1, startY + row * 3 + 1, PixelColor.BLACK);
+		for (var letter : letters) {
+			drawLetter(graphic, letter, offsetX, startY, scale);
+			var letterWidth = letter[0].length;
+			offsetX += (letterWidth + 1) * scale;
+		}
+	}
+
+	private void drawLetter(PixelDisplay graphic, int[][] letter, int startX, int startY, int scale) {
+		for (var row = 0; row < letter.length; row++) {
+			for (var col = 0; col < letter[row].length; col++) {
+				if (letter[row][col] == 1) {
+					for (var sx = 0; sx < scale; sx++) {
+						for (var sy = 0; sy < scale; sy++) {
+							graphic.setPixel(startX + col * scale + sx, startY + row * scale + sy, PixelColor.BLACK);
+						}
+					}
 				}
 			}
-		}
-	}
-
-	private void drawPressSpace(PixelDisplay graphic) {
-		for (var x = 40; x < 120; x++) {
-			graphic.setPixel(x, 120, PixelColor.BLACK);
-			graphic.setPixel(x, 122, PixelColor.BLACK);
 		}
 	}
 
