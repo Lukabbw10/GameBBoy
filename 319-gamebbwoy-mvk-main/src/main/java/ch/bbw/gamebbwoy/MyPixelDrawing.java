@@ -19,6 +19,7 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 	private GameState state = GameState.INTRO;
 	private PixelDisplay graphic;
 	private boolean speedIncreased = false;
+	private final ScoreDisplay scoreDisplay = new ScoreDisplay(5, 5);
 
 	public static void main(String[] args) throws Throwable {
 		GameBbwoy.playGame(new MyPixelDrawing());
@@ -44,6 +45,7 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 
 	private void playGame(PixelDisplay graphic) {
 		mario.tick(graphic);
+		scoreDisplay.draw(graphic, score);
 
 		if (score >= 2 && obstacles.size() < 2) {
 			obstacles.add(new Obstacle(graphic, 40));
