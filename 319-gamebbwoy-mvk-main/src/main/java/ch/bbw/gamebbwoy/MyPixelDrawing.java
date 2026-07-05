@@ -101,6 +101,13 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 			{1, 0, 0},
 			{1, 1, 1}
 	};
+	private static final int[][] LETTER_W = {
+			{1, 0, 0, 0, 1},
+			{1, 0, 0, 0, 1},
+			{1, 0, 1, 0, 1},
+			{1, 1, 0, 1, 1},
+			{1, 0, 0, 0, 1}
+	};
 	private static final int[][] SPACE = {
 			{0, 0},
 			{0, 0},
@@ -116,6 +123,9 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 	private PixelDisplay graphic;
 	private boolean speedIncreased = false;
 	private final ScoreDisplay scoreDisplay = new ScoreDisplay(5, 5);
+	private FlyingGomba flyingGomba;
+	private Background background;
+	private InstructionScreen instructionScreen;
 
 	public static void main(String[] args) throws Throwable {
 		GameBbwoy.playGame(new MyPixelDrawing());
@@ -126,6 +136,10 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 		this.graphic = graphic;
 		mario = new Mario(graphic);
 		obstacles.add(new Obstacle(graphic, 0));
+		flyingGomba = new FlyingGomba(graphic);
+		background = new Background(graphic);
+		instructionScreen = new InstructionScreen();
+
 	}
 
 	@Override
@@ -134,6 +148,7 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 
 		switch (state) {
 			case INTRO -> drawIntro(graphic);
+			case INSTRUCTIONS -> drawInstructions(graphic);
 			case PLAYING -> playGame(graphic);
 			case GAME_OVER -> drawGameOver(graphic);
 		}
@@ -142,12 +157,19 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 	private void playGame(PixelDisplay graphic) {
 		mario.tick(graphic);
 		scoreDisplay.draw(graphic, score);
+		flyingGomba.tick(graphic, score);
+		background.draw(graphic);
 
-		if (score >= 2 && obstacles.size() < 2) {
-			obstacles.add(new Obstacle(graphic, 40));
+		if (flyingGomba.isColliding(MARIO_X, mario.getY(), MARIO_WIDTH, MARIO_HEIGHT)) {
+			flyingGomba.collect();
+			score += 5;
 		}
 
-		if (score >= 4 && !speedIncreased) {
+		if (score >= 6 && obstacles.size() < 2) {
+			obstacles.add(new Obstacle(graphic, 50));
+		}
+
+		if (score >= 12 && !speedIncreased) {
 			Obstacle.increaseSpeed();
 			speedIncreased = true;
 		}
@@ -163,6 +185,10 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 				state = GameState.GAME_OVER;
 			}
 		}
+	}
+
+	private void drawInstructions(PixelDisplay graphic) {
+		instructionScreen.draw(graphic);
 	}
 
 	private void drawIntro(PixelDisplay graphic) {
@@ -185,11 +211,13 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 		}
 
 		var gameOverText = new int[][][]{LETTER_R, LETTER_E, LETTER_S, LETTER_T, LETTER_A, LETTER_R, LETTER_T};
-		drawText(graphic, gameOverText, 50, 60, 2);
+		drawText(graphic, gameOverText, 50, 50, 2);
 
 		var pressText = new int[][][]{LETTER_P, LETTER_R, LETTER_E, LETTER_S, LETTER_S, SPACE,
 				LETTER_S, LETTER_P, LETTER_A, LETTER_C, LETTER_E};
-		drawText(graphic, pressText, 35, 90, 2);
+		drawText(graphic, pressText, 35, 80, 2);
+
+		scoreDisplay.draw(graphic, score);
 	}
 
 	private void drawText(PixelDisplay graphic, int[][][] letters, int startX, int startY, int scale) {
@@ -240,12 +268,18 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 		mario = new Mario(graphic);
 		obstacles.clear();
 		obstacles.add(new Obstacle(graphic, 0));
+		flyingGomba = new FlyingGomba(graphic);
 	}
 
 	@Override
 	public void onButtonPress(GameButton button) {
 		switch (state) {
 			case INTRO -> {
+				if (button == GameButton.SPACE) {
+					state = GameState.INSTRUCTIONS;
+				}
+			}
+			case INSTRUCTIONS -> {
 				if (button == GameButton.SPACE) {
 					state = GameState.PLAYING;
 				}

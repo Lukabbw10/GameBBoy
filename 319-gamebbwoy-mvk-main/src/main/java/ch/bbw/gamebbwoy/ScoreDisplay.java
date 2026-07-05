@@ -75,18 +75,15 @@ public class ScoreDisplay {
     public void draw(PixelDisplay graphic, int score) {
         var offsetX = 0;
 
-        // "SCORE" zeichnen
         for (var letter : LETTERS) {
             drawBitmap(graphic, letter, startX + offsetX, startY);
             offsetX += DIGIT_WIDTH + DIGIT_SPACING;
         }
 
-        // Doppelpunkt
         graphic.setPixel(startX + offsetX, startY + 1, PixelColor.BLACK);
         graphic.setPixel(startX + offsetX, startY + 3, PixelColor.BLACK);
         offsetX += DIGIT_SPACING + 2;
 
-        // Ziffern
         for (var ch : String.valueOf(score).toCharArray()) {
             drawBitmap(graphic, DIGITS[ch - '0'], startX + offsetX, startY);
             offsetX += DIGIT_WIDTH + DIGIT_SPACING;
