@@ -62,20 +62,41 @@ public class ScoreDisplay {
             {1,1,1}
     };
 
+    private static final int[][] LETTER_H = {
+            {1, 0, 1},
+            {1, 0, 1},
+            {1, 1, 1},
+            {1, 0, 1},
+            {1, 0, 1}
+    };
+
+    private static final int[][] LETTER_I = {
+            {1, 1, 1},
+            {0, 1, 0},
+            {0, 1, 0},
+            {0, 1, 0},
+            {1, 1, 1}
+    };
+
     private static final int[][][] LETTERS = {LETTER_S, LETTER_C, LETTER_O, LETTER_R, LETTER_E};
+    private static final int[][][] SCORE_LETTERS = {LETTER_S, LETTER_C, LETTER_O, LETTER_R, LETTER_E};
+    private static final int[][][] HI_LETTERS = {LETTER_H, LETTER_I};
 
     private final int startX;
     private final int startY;
 
-    public ScoreDisplay(int startX, int startY) {
+    private final int[][][] labelLetters;
+
+    public ScoreDisplay(int startX, int startY, boolean isHighScore) {
         this.startX = startX;
         this.startY = startY;
+        this.labelLetters = isHighScore ? HI_LETTERS : SCORE_LETTERS;
     }
 
     public void draw(PixelDisplay graphic, int score) {
         var offsetX = 0;
 
-        for (var letter : LETTERS) {
+        for (var letter : labelLetters) {
             drawBitmap(graphic, letter, startX + offsetX, startY);
             offsetX += DIGIT_WIDTH + DIGIT_SPACING;
         }

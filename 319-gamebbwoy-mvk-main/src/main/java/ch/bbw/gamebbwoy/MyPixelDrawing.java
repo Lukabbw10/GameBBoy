@@ -119,13 +119,16 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 	private Mario mario;
 	private List<Obstacle> obstacles = new ArrayList<>();
 	private int score = 0;
+	private int highScore = 0;
 	private GameState state = GameState.INTRO;
 	private PixelDisplay graphic;
 	private boolean speedIncreased = false;
-	private final ScoreDisplay scoreDisplay = new ScoreDisplay(5, 5);
+	private final ScoreDisplay scoreDisplay = new ScoreDisplay(5, 5, false);
+	private final ScoreDisplay highScoreDisplay = new ScoreDisplay(5, 12, true);
 	private FlyingGomba flyingGomba;
 	private Background background;
 	private InstructionScreen instructionScreen;
+
 
 	public static void main(String[] args) throws Throwable {
 		GameBbwoy.playGame(new MyPixelDrawing());
@@ -182,6 +185,9 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 				score++;
 			}
 			if (isColliding(obs)) {
+				if (score > highScore) {
+					highScore = score;
+				}
 				state = GameState.GAME_OVER;
 			}
 		}
@@ -211,13 +217,15 @@ public class MyPixelDrawing implements PixelDrawing, ButtonListener {
 		}
 
 		var gameOverText = new int[][][]{LETTER_R, LETTER_E, LETTER_S, LETTER_T, LETTER_A, LETTER_R, LETTER_T};
-		drawText(graphic, gameOverText, 50, 50, 2);
+		drawText(graphic, gameOverText, 50, 45, 2);
 
 		var pressText = new int[][][]{LETTER_P, LETTER_R, LETTER_E, LETTER_S, LETTER_S, SPACE,
 				LETTER_S, LETTER_P, LETTER_A, LETTER_C, LETTER_E};
-		drawText(graphic, pressText, 35, 80, 2);
+		drawText(graphic, pressText, 35, 75, 2);
 
 		scoreDisplay.draw(graphic, score);
+		highScoreDisplay.draw(graphic, highScore);
+
 	}
 
 	private void drawText(PixelDisplay graphic, int[][][] letters, int startX, int startY, int scale) {
